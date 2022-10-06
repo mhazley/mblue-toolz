@@ -3,7 +3,7 @@ package toolz
 import (
 	"errors"
 	"github.com/godbus/dbus"
-	"github.com/mame82/mblue-toolz/dbusHelper"
+	"github.com/mhazley/mblue-toolz/dbusHelper"
 	"log"
 	"net"
 )
@@ -30,7 +30,6 @@ const (
 	PropAdapterModalias            = "Modalias"            //readonly, optional, string
 )
 
-
 func adapterExists(adapterPath dbus.ObjectPath) (exists bool, err error) {
 	om, err := dbusHelper.NewObjectManager()
 	if err != nil {
@@ -38,7 +37,7 @@ func adapterExists(adapterPath dbus.ObjectPath) (exists bool, err error) {
 	}
 	defer om.Close()
 
-	adapter,exists,err := om.GetObject(adapterPath)
+	adapter, exists, err := om.GetObject(adapterPath)
 	if !exists || err != nil {
 		return
 	}
@@ -56,7 +55,6 @@ func (a *Adapter1) Close() {
 	// closes CLients DBus connection
 	a.c.Disconnect()
 }
-
 
 func (a *Adapter1) StartDiscovery() error {
 	name, err := a.GetName()
@@ -236,5 +234,5 @@ func Adapter(adapterPath dbus.ObjectPath) (res *Adapter1, err error) {
 }
 
 func AdapterNameToDBusPath(adapterName string) dbus.ObjectPath {
-	return dbus.ObjectPath("/org/bluez/"+adapterName)
+	return dbus.ObjectPath("/org/bluez/" + adapterName)
 }

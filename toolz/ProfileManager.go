@@ -2,7 +2,7 @@ package toolz
 
 import (
 	"github.com/godbus/dbus"
-	"github.com/mame82/mblue-toolz/dbusHelper"
+	"github.com/mhazley/mblue-toolz/dbusHelper"
 )
 
 const DBusNameProfileManager1Interface = "org.bluez.ProfileManager1"

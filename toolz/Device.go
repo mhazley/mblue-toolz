@@ -1,9 +1,9 @@
 package toolz
 
 import (
-	"github.com/godbus/dbus"
-	"github.com/mame82/mblue-toolz/dbusHelper"
 	"errors"
+	"github.com/godbus/dbus"
+	"github.com/mhazley/mblue-toolz/dbusHelper"
 	"net"
 )
 
@@ -38,7 +38,6 @@ var (
 	eDeviceNotExistent = errors.New("Device doesn't exist")
 	ePropertyTypeCast  = errors.New("Error casting property to intended type")
 )
-
 
 type Device1 struct {
 	c *dbusHelper.Client
@@ -102,7 +101,6 @@ func (d *Device1) CancelPairing() error {
 	return call.Err
 }
 
-
 /* Properties */
 func (d *Device1) GetTrusted() (res bool, err error) {
 	val, err := d.c.GetProperty(PropDeviceTrusted)
@@ -133,12 +131,14 @@ func (d *Device1) GetAddress() (res net.HardwareAddr, err error) {
 	if err != nil {
 		return
 	}
-	strAddr,ok := val.Value().(string)
+	strAddr, ok := val.Value().(string)
 	if !ok {
 		return res, ePropertyTypeCast
 	}
-	res,err = net.ParseMAC(strAddr)
-	if err != nil { return res, ePropertyTypeCast }
+	res, err = net.ParseMAC(strAddr)
+	if err != nil {
+		return res, ePropertyTypeCast
+	}
 	return
 }
 
@@ -147,7 +147,7 @@ func (d *Device1) GetAddressType() (res string, err error) {
 	if err != nil {
 		return
 	}
-	res,ok := val.Value().(string)
+	res, ok := val.Value().(string)
 	if !ok {
 		return res, ePropertyTypeCast
 	}
@@ -159,7 +159,7 @@ func (d *Device1) GetConnected() (res bool, err error) {
 	if err != nil {
 		return
 	}
-	res,ok := val.Value().(bool)
+	res, ok := val.Value().(bool)
 	if !ok {
 		return res, ePropertyTypeCast
 	}
@@ -171,20 +171,19 @@ func (d *Device1) GetPaired() (res bool, err error) {
 	if err != nil {
 		return
 	}
-	res,ok := val.Value().(bool)
+	res, ok := val.Value().(bool)
 	if !ok {
 		return res, ePropertyTypeCast
 	}
 	return
 }
 
-
 func (d *Device1) GetAlias() (res string, err error) {
 	val, err := d.c.GetProperty(PropDeviceAlias)
 	if err != nil {
 		return
 	}
-	res,ok := val.Value().(string)
+	res, ok := val.Value().(string)
 	if !ok {
 		return res, ePropertyTypeCast
 	}
@@ -195,10 +194,9 @@ func (d *Device1) SetAlias(val string) (err error) {
 	return d.c.SetProperty(PropDeviceAlias, val)
 }
 
-
 func Device(devicePath dbus.ObjectPath) (res *Device1, err error) {
 	exists, err := deviceExists(devicePath)
-	if err != nil || !exists{
+	if err != nil || !exists {
 		return nil, eDeviceNotExistent
 	}
 	res = &Device1{
@@ -214,7 +212,7 @@ func deviceExists(devicePath dbus.ObjectPath) (exists bool, err error) {
 	}
 	defer om.Close()
 
-	adapter,exists,err := om.GetObject(devicePath)
+	adapter, exists, err := om.GetObject(devicePath)
 	if !exists || err != nil {
 		return
 	}

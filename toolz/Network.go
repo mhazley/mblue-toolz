@@ -2,25 +2,25 @@ package toolz
 
 import (
 	"github.com/godbus/dbus"
-	"github.com/mame82/mblue-toolz/dbusHelper"
+	"github.com/mhazley/mblue-toolz/dbusHelper"
 )
 
 const DBusNameNetworkServer1Interface = "org.bluez.NetworkServer1"
 const DBusNameNetwork1Interface = "org.bluez.Network1"
 
 type NetworkServerUUID string
+
 const (
-	UUID_NETWORK_SERVER_NAP NetworkServerUUID = "nap"
+	UUID_NETWORK_SERVER_NAP  NetworkServerUUID = "nap"
 	UUID_NETWORK_SERVER_PANU NetworkServerUUID = "panu"
-	UUID_NETWORK_SERVER_GN NetworkServerUUID = "gn"
+	UUID_NETWORK_SERVER_GN   NetworkServerUUID = "gn"
 )
 
 const (
-	PropNetworkConnected             = "Connected" //bool, read only
-	PropNetworkInterface             = "Interface" //string, read only
-	PropNetworkUUID             = "UUID" //string, read only
+	PropNetworkConnected = "Connected" //bool, read only
+	PropNetworkInterface = "Interface" //string, read only
+	PropNetworkUUID      = "UUID"      //string, read only
 )
-
 
 //NetworkServer1
 type NetworkServer1 struct {
@@ -114,8 +114,6 @@ func (a *Network1) GetConnected() (res bool, err error) {
 	}
 	return val.Value().(bool), nil
 }
-
-
 
 func Network(targetDevicePath dbus.ObjectPath) (res *Network1, err error) {
 	exists, err := deviceExists(targetDevicePath)

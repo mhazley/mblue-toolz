@@ -1,6 +1,5 @@
 # mblue-toolz
 Go bindings for Bluez API (DBus + Bluetooth Management Socket).
-Only functionality needed for P4wnP1 successor is implemented:
 
 Status: Under construction, experimental forever 
 
@@ -10,12 +9,12 @@ Status: Under construction, experimental forever
 - ProfileManager (DBus)
 - Device (DBus)
 - Network (DBus, currently only NetworkServer: nap, panu, gn)
-- **mgmt-api** (Bluetooth Management Socket, only commands used by P4wnP1, focus was on SSP mode toggling)
+- **mgmt-api** (Bluetooth Management Socket, only subset of commands implemented)
 
 ## Copyright
 
     mblue-toolz native Go Bluez API for P4wnP1 A.L.O.A.
-    Copyright (C) 2018 Marcus Mengs
+    Copyright (C) 2022 Marcus Mengs & Matt Hazley
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
