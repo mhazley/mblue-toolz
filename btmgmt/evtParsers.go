@@ -40,9 +40,10 @@ func (cs *CommandStatusEvent) UpdateFromPayload(payload []byte) (err error) {
 	cs.Status = CmdStatus(payload[2])
 	return
 }
+
 type CommandCompleteEvent struct {
-	CmdCode CmdCode
-	Status  CmdStatus
+	CmdCode      CmdCode
+	Status       CmdStatus
 	ReturnParams []byte
 }
 
@@ -66,8 +67,8 @@ type ControllerInformation struct {
 	Name              string      //[249]byte, 0x00 terminated
 	ShortName         string      //[11]byte, 0x00 terminated
 
-	ServiceNetworkServerGn bool
-	ServiceNetworkServerNap bool
+	ServiceNetworkServerGn   bool
+	ServiceNetworkServerNap  bool
 	ServiceNetworkServerPanu bool
 }
 
@@ -255,4 +256,67 @@ func (v *VersionInformation) UpdateFromPayload(pay []byte) (err error) {
 
 func (v VersionInformation) String() string {
 	return fmt.Sprintf("Version %d.%d", v.Version, v.Revision)
+}
+
+type AddressType uint8
+
+const (
+	BR_EDR AddressType = iota
+	LE_PUBLIC
+	LE_RANDOM
+)
+
+func (a AddressType) String() string {
+	switch a {
+	case BR_EDR:
+		return "BR/EDR"
+	case LE_PUBLIC:
+		return "LE PUBLIC"
+	case LE_RANDOM:
+		return "LE RANDOM"
+	}
+	return "unknown"
+}
+
+type ConnectionAddress struct {
+	Addr     net.HardwareAddr
+	AddrType AddressType
+}
+
+func (c *ConnectionAddress) UpdateFromPayload(pay []byte) (err error) {
+	if len(pay) != 7 {
+		return ErrPayloadFormat
+	}
+	p := copyReverse(pay[0:6])
+	c.Addr = net.HardwareAddr(p)
+	c.AddrType = AddressType(pay[6])
+	return
+}
+
+type ConnectionInfoList struct {
+	ConnectionCount uint16
+	ConnectionList  []ConnectionAddress
+}
+
+func (c *ConnectionInfoList) UpdateFromPayload(pay []byte) (err error) {
+	if len(pay) < 2 {
+		return ErrPayloadFormat
+	}
+	c.ConnectionCount = binary.LittleEndian.Uint16(pay[0:2])
+	c.ConnectionList = make([]ConnectionAddress, c.ConnectionCount)
+
+	for i, _ := range c.ConnectionList {
+		startIdx := 2 + (i * 8)
+		endIdx := startIdx + 7
+		c.ConnectionList[i].UpdateFromPayload(pay[startIdx:endIdx])
+	}
+	return
+}
+
+func (c ConnectionInfoList) String() string {
+	res := "Connection List: "
+	for _, conn := range c.ConnectionList {
+		res += fmt.Sprintf("%v [%v]  ", conn.Addr.String(), conn.AddrType.String())
+	}
+	return res
 }
